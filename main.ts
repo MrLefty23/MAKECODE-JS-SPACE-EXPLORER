@@ -12,7 +12,8 @@ let bro: Sprite = null
 let blasterVelocityX = 0 
 let blasterVelocityY = 200
 let keys = 2
-let bossFight = false
+let bossFight1 = false
+let bossFight2 = false
 let aliensOnScreen = 0
 let blasterType = 1
 let bootsType = 1
@@ -51,6 +52,7 @@ namespace SpriteKind{
     export const BigRobo = SpriteKind.create()
     export const SubtractHealth = SpriteKind.create()
     export const RandHealth = SpriteKind.create()
+    
 }   
 
 info.setLife(20)
@@ -899,21 +901,6 @@ game.onUpdate(function(){
         })
     }
     
-    //spawnRoboBoss
-    function spawnRoboBoss(xPos: number, yPos: number) {
-        let roboBoss = sprites.create(assets.image`RoboKillerPieceOfJunk1001`)
-        roboBoss.setPosition(xPos * 16, yPos * 16)
-        //deleteSprites
-        game.onUpdate(function () {
-            if (deleteSprites == true) {
-                roboBoss.destroy()
-            }
-            if(roboBossActivate == true){
-                roboBoss.destroy()
-                roboBossActivate = false
-            }
-        })
-    }
     
     //energyCell
     function spawnCell(xPos: number, yPos: number, direction: number, order: number, solved: number){
@@ -999,7 +986,6 @@ game.onUpdate(function(){
             }
             //puzzle
             if (cell1 == true && cell2 == true && cell3 == true && cell4 == true && cell5 == true && roboBossActivate == false){
-                spawnBigAlien(24, 44.5, 2)
                 roboBossActivate = true
                 solved = 100
                 cell1 = false
@@ -1123,15 +1109,169 @@ game.onUpdate(function(){
 
     }
     
-    
+    //spawnRoboBoss
+    function spawnRoboBoss(xPos: number, yPos: number) {
+        let roboBoss = sprites.create(assets.image`RoboKillerPieceOfJunk1001`, SpriteKind.BigRobo)
+        roboBoss.setPosition(xPos * 16, yPos * 16)
+        let rbalive = true
+        let moveX = 50
+        let moveY = 0
+        let moveTime = 2200
+        let moveSequence = 1
+        let attackCooldown = 0
+        let roboBossHP = 20
+
+        roboBoss.onDestroyed(function () {
+            rbalive = false
+            //spawnKey
+            let key: Sprite = sprites.create(assets.image`key`, SpriteKind.Key)
+            key.setPosition(roboBoss.x, roboBoss.y)
+            //spawn💗
+            for (let i = 0; i < 3; i++) {
+                let heart: Sprite = sprites.create(img`
+                    . . . . . . . . . . . . . . . .
+                    . . f f f f f f . f f f f f f .
+                    . f f 3 3 3 3 f f f 3 3 3 3 f f
+                    . f 3 3 3 3 3 3 f 3 3 3 3 3 3 f
+                    . f 3 3 3 3 3 3 3 3 1 1 1 3 3 f
+                    . f 3 3 3 3 3 3 3 3 1 1 1 3 3 f
+                    . f 3 3 3 3 3 3 3 3 1 1 1 3 3 f
+                    . f 3 3 3 3 3 3 3 3 3 3 3 3 3 f
+                    . f f 3 3 3 3 3 3 3 3 3 3 3 f f
+                    . . f f 3 3 3 3 3 3 3 3 3 f f .
+                    . . . f f 3 3 3 3 3 3 3 f f . .
+                    . . . . f f 3 3 3 3 3 f f . . .
+                    . . . . . f f 3 3 3 f f . . . .
+                    . . . . . . f f 3 f f . . . . .
+                    . . . . . . . f f f . . . . . .
+                    . . . . . . . . . . . . . . . .
+                `, SpriteKind.Food)
+                heart.setPosition(roboBoss.x, roboBoss.y)
+            }
+
+        })
+
+        //movementSequence
+        game.onUpdateInterval(moveTime, function () {
+            if(rbalive == true && roboBossActivate == true){
+
+                roboBoss.setVelocity(moveX, moveY)
+                moveSequence++
+                if (moveSequence > 4) {
+                    moveSequence = 1
+                }
+                if (moveSequence == 1 || moveSequence == 4) {
+                    moveX = 50
+                }
+                if (moveSequence == 2 || moveSequence == 3) {
+                    moveX = -50
+                }
+            }
+        })
+
+        //projectile
+        game.onUpdateInterval(100, function () {
+            //bob.say(bossHP.toString(), 1000)
+            if (rbalive == true && roboBossActivate == true) {
+                if (Math.abs(bob.x - roboBoss.x) <= 70 && Math.abs(bob.y - roboBoss.y) <= 70) {
+                    attackCooldown++
+                    if (attackCooldown < 19) {
+                        enemyBlast = sprites.createProjectileFromSprite(img`
+                            . . . . . . . . . . . . . . . .
+                            . . . . . . . . . . . . . . . .
+                            . . . . . . . . . . . . . . . .
+                            . . . . . b b b b b b . . . . .
+                            . . . . b b 9 9 9 9 b b . . . .
+                            . . . . b 9 9 d d 9 9 b . . . .
+                            . . . . b 9 d d d d 9 b . . . .
+                            . . . . b 9 d d d d 9 b . . . .
+                            . . . . b 9 9 d d 9 9 b . . . .
+                            . . . . b b 9 9 9 9 b b . . . .
+                            . . . . . b b b b b b . . . . .
+                            . . . . . . . . . . . . . . . .
+                            . . . . . . . . . . . . . . . .
+                            . . . . . . . . . . . . . . . .
+                            . . . . . . . . . . . . . . . .
+                            . . . . . . . . . . . . . . . .
+                        `, roboBoss, 0, 200)
+                        enemyBlast.setKind(SpriteKind.EnemyProjectile)
+                        music.knock.play()
+                    }
+                }
+                if (attackCooldown > 29) {
+                    attackCooldown = 0
+                }
+            }
+        })
+
+
+        //bossTakesDamage
+        game.onUpdate(function () {
+            sprites.onOverlap(SpriteKind.Projectile, SpriteKind.BigRobo, function (blast: Sprite, boss: Sprite) {
+                roboBossHP--
+                blast.destroy()
+                music.thump.play()
+                boss.startEffect(effects.fire, 300)
+                let bossSpeech = Math.pickRandom([1, 2, 3, 4])
+                if (bossSpeech == 1) {
+                    boss.say("BOB?!?!", 100)
+                }
+                if (bossSpeech == 2) {
+                    boss.say("WHY YOU BULLY ME?", 100)
+                }
+                if (bossSpeech == 3) {
+                    boss.say("I TO0 SWEET TO BE BULLIED!", 100)
+                }
+                if (bossSpeech == 4) {
+                    boss.say("OWWW!!!", 100)
+                }
+                //destroyBoss
+                if (roboBossHP < 1) {
+                    boss.say("", 1)
+                    boss.destroy()
+                    music.smallCrash.play()
+                    music.stopAllSounds()
+                    music.play(song, music.PlaybackMode.LoopingInBackground)
+
+
+                }
+            })
+
+        })
+
+        //BossFightSong
+        game.onUpdate(function () {
+            if (Math.abs(bob.x - roboBoss.x) <= 50 && Math.abs(bob.y - roboBoss.y) <= 80 && bossFight == false) {
+                bossFight = true
+                music.stopAllSounds()
+                music.play(song2, music.PlaybackMode.LoopingInBackground)
+                //test++
+                //bob.say(test.toString())
+
+            }
+            if (bossFight == true && Math.abs(bob.x - roboBoss.x) > 50 && Math.abs(bob.y - roboBoss.y) > 80) {
+                music.stopAllSounds()
+                music.play(song, music.PlaybackMode.LoopingInBackground)
+                bossFight = false
+                //test++
+                //bob.say(test.toString())
+            }
+        })
+        //deleteSprites
+        game.onUpdate(function () {
+            if (deleteSprites == true) {
+                roboBoss.destroy()
+            }
+            /*if (roboBossActivate == true) {
+                roboBoss.destroy()
+                roboBossActivate = false
+            }*/
+        })
+    }
     //BigAlien
     function spawnBigAlien(xPos: number, yPos: number, costume: number){
         let bigAlien = sprites.create(assets.image`AlienBuddyBully3000`, SpriteKind.BigAlien)
         bigAlien.setPosition(xPos * 16, yPos * 16)
-        if(costume == 2){
-            bigAlien.setImage(assets.image`RoboKillerPieceOfJunk1001`)
-            //bigAlien.setKind(SpriteKind.BigRobo)
-        }
 
         let alive = true
         let moveX = 50
@@ -1253,35 +1393,7 @@ game.onUpdate(function(){
 
                 }
             })
-            /*sprites.onOverlap(SpriteKind.Projectile, SpriteKind.BigRobo, function (blast: Sprite, boss: Sprite) {
-                bossHP--
-                blast.destroy()
-                music.thump.play()
-                boss.startEffect(effects.fire, 300)
-                let bossSpeech = Math.pickRandom([1, 2, 3, 4])
-                if (bossSpeech == 1) {
-                    boss.say("BOB?!?!", 100)
-                }
-                if (bossSpeech == 2) {
-                    boss.say("WHY YOU BULLY ME?", 100)
-                }
-                if (bossSpeech == 3) {
-                    boss.say("I TO0 SWEET TO BE BULLIED!", 100)
-                }
-                if (bossSpeech == 4) {
-                    boss.say("OWWW!!!", 100)
-                }
-                //destroyBoss
-                if (bossHP < 1) {
-                    boss.say("", 1)
-                    boss.destroy()
-                    music.smallCrash.play()
-                    music.stopAllSounds()
-                    music.play(song, music.PlaybackMode.LoopingInBackground)
-
-
-                }
-            })*/
+            
         })
 
         //BossFightSong
@@ -1303,12 +1415,9 @@ game.onUpdate(function(){
             }
         })
         
-    
+        
     }
-    //roboBoss
-    function cellPuzzleSolved(){
 
-    }
 
     //portalForNewLife
     function spawnPortal(xPos: number, yPos: number){
@@ -1737,7 +1846,7 @@ function level1Setup() {
     spawnCell(14.5, 45.5, 4, 4, 1)
     spawnCell(14.5, 42.5, 1, 5, 4)
     spawnRoboBoss(24, 44.5)
-    spawnMonkeyCompanion()
+    //spawnMonkeyCompanion()
 
 }
 
@@ -1761,7 +1870,10 @@ function level2Setup(){
     spawnNPC(32.5, 31.5, 12)
     spawnChest(1.5, 39, 3)
     spawnChest(1, 29.5, 4)
-    bro.setPosition(bob.x, bob.y)
+    if(monkeyCompanion == true){
+        bro.setPosition(bob.x, bob.y)
+    }
+  
     //spawnLevers
     spawnLever(3, 3, 1, 0)
     spawnLever(13, 3, 2, 0)
