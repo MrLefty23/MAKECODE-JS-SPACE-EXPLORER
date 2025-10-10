@@ -1208,32 +1208,36 @@ game.onUpdate(function(){
         //bossTakesDamage
         game.onUpdate(function () {
             sprites.onOverlap(SpriteKind.Projectile, SpriteKind.BigRobo, function (blast: Sprite, boss: Sprite) {
-                roboBossHP--
-                blast.destroy()
-                music.thump.play()
-                boss.startEffect(effects.fire, 300)
-                let bossSpeech = Math.pickRandom([1, 2, 3, 4])
-                if (bossSpeech == 1) {
-                    boss.say("BOB?!?!", 100)
-                }
-                if (bossSpeech == 2) {
-                    boss.say("WHY YOU BULLY ME?", 100)
-                }
-                if (bossSpeech == 3) {
-                    boss.say("I TO0 SWEET TO BE BULLIED!", 100)
-                }
-                if (bossSpeech == 4) {
-                    boss.say("OWWW!!!", 100)
-                }
-                //destroyBoss
-                if (roboBossHP < 1) {
-                    boss.say("", 1)
-                    boss.destroy()
+                if(roboBossActivate == false){
+                    blast.destroy()
                     music.smallCrash.play()
-                    music.stopAllSounds()
-                    music.play(song, music.PlaybackMode.LoopingInBackground)
-
-
+                }
+                if(roboBossActivate == true){
+                    roboBossHP--
+                    blast.destroy()
+                    music.thump.play()
+                    boss.startEffect(effects.fire, 300)
+                    let bossSpeech = Math.pickRandom([1, 2, 3, 4])
+                    if (bossSpeech == 1) {
+                        boss.say("BOB?!?!", 100)
+                    }
+                    if (bossSpeech == 2) {
+                        boss.say("WHY YOU BULLY ME?", 100)
+                    }
+                    if (bossSpeech == 3) {
+                        boss.say("I TO0 SWEET TO BE BULLIED!", 100)
+                    }
+                    if (bossSpeech == 4) {
+                        boss.say("OWWW!!!", 100)
+                    }
+                    //destroyBoss
+                    if (roboBossHP < 1) {
+                        boss.say("", 1)
+                        boss.destroy()
+                        music.smallCrash.play()
+                        music.stopAllSounds()
+                        music.play(song, music.PlaybackMode.LoopingInBackground)
+                    }
                 }
             })
 
@@ -1241,18 +1245,18 @@ game.onUpdate(function(){
 
         //BossFightSong
         game.onUpdate(function () {
-            if (Math.abs(bob.x - roboBoss.x) <= 50 && Math.abs(bob.y - roboBoss.y) <= 80 && bossFight == false) {
-                bossFight = true
+            if (Math.abs(bob.x - roboBoss.x) <= 50 && Math.abs(bob.y - roboBoss.y) <= 80 && bossFight2 == false && roboBossActivate == true) {
+                bossFight2 = true
                 music.stopAllSounds()
                 music.play(song2, music.PlaybackMode.LoopingInBackground)
                 //test++
                 //bob.say(test.toString())
 
             }
-            if (bossFight == true && Math.abs(bob.x - roboBoss.x) > 50 && Math.abs(bob.y - roboBoss.y) > 80) {
+            if (bossFight2 == true && Math.abs(bob.x - roboBoss.x) > 50 && Math.abs(bob.y - roboBoss.y) > 80) {
                 music.stopAllSounds()
                 music.play(song, music.PlaybackMode.LoopingInBackground)
-                bossFight = false
+                bossFight2 = false
                 //test++
                 //bob.say(test.toString())
             }
@@ -1398,18 +1402,18 @@ game.onUpdate(function(){
 
         //BossFightSong
         game.onUpdate(function(){
-            if(Math.abs(bob.x - bigAlien.x)<= 50 && Math.abs(bob.y - bigAlien.y) <= 80 && bossFight == false && costume == 1){
-                bossFight = true
+            if(Math.abs(bob.x - bigAlien.x)<= 50 && Math.abs(bob.y - bigAlien.y) <= 80 && bossFight1 == false && costume == 1){
+                bossFight1 = true
                 music.stopAllSounds()
                 music.play(song2, music.PlaybackMode.LoopingInBackground)
                 //test++
                 //bob.say(test.toString())
 
             }
-            if (bossFight == true && Math.abs(bob.x - bigAlien.x) > 50 && Math.abs(bob.y - bigAlien.y) > 80 && costume == 1){
+            if (bossFight1 == true && Math.abs(bob.x - bigAlien.x) > 50 && Math.abs(bob.y - bigAlien.y) > 80 && costume == 1){
                 music.stopAllSounds()
                 music.play(song, music.PlaybackMode.LoopingInBackground)
-                bossFight = false
+                bossFight1 = false
                 //test++
                 //bob.say(test.toString())
             }
