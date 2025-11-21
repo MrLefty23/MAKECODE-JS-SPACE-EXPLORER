@@ -704,6 +704,82 @@ aaaaaaaff66bbbb6bb6bbb6bbbaaaaaaa..
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 `;
+            case "image31":
+            case "leverDownOff":return img`
+a a a c c a a a a a a c c a a a 
+3 3 3 3 c 3 3 3 3 3 3 3 c 3 3 3 
+3 3 3 a c 3 3 3 3 3 3 3 c 3 3 3 
+a a a a c a a a a a a a c c a a 
+c c c c c d d d d d d c c c c c 
+c a 3 3 c d d d d d d c 3 3 3 a 
+c c a a c d d d d d d c a a a a 
+c c c c c b b b b b b c c c c c 
+a a a c c b b c c b b c c a a a 
+a a a c c b b c c b b c c a a a 
+c c c c c b b d c b b c c c c c 
+c a a a c b b d c b b c a a a c 
+c c c c c b c 4 4 b b c c c c c 
+a a c c a c c 4 4 c c c a a a a 
+c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c 
+`;
+            case "image33":
+            case "leverUpOff":return img`
+c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c 
+a a c c a c c 4 4 c c c a a a a 
+c c c c c b c 4 4 b b c c c c c 
+c a a a c b b d c b b c a a a c 
+c c c c c b b d c b b c c c c c 
+a a a c c b b c c b b c c a a a 
+a a a c c b b c c b b c c a a a 
+c c c c c b b b b b b c c c c c 
+c c a a c d d d d d d c a a a a 
+c a 3 3 c d d d d d d c 3 3 3 a 
+c c c c c d d d d d d c c c c c 
+a a a a c a a a a a a a c c a a 
+3 3 3 a c 3 3 3 3 3 3 3 c 3 3 3 
+3 3 3 3 c 3 3 3 3 3 3 3 c 3 3 3 
+a a a c c a a a a a a c c a a a 
+`;
+            case "image34":
+            case "leverDownOn":return img`
+a a a c c a a a a a a c c a a a 
+3 3 3 3 c 3 3 3 3 3 3 3 c 3 3 3 
+3 3 3 a c 3 3 3 3 3 3 3 c 3 3 3 
+a a a a c a a 4 4 a a a c c a a 
+c c c c c d d 4 4 d d c c c c c 
+c a 3 3 c d d d c d d c 3 3 3 a 
+c c a a c d d d c d d c a a a a 
+c c c c c b b c c b b c c c c c 
+a a a c c b b c c b b c c a a a 
+a a a c c b b b b b b c c a a a 
+c c c c c b b b b b b c c c c c 
+c a a a c b b b b b b c a a a c 
+c c c c c b c b b b b c c c c c 
+a a c c a c c b b c c c a a a a 
+c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c 
+`;
+            case "image35":
+            case "leverUpOn":return img`
+c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c 
+a a c c a c c b b c c c a a a a 
+c c c c c b c b b b b c c c c c 
+c a a a c b b b b b b c a a a c 
+c c c c c b b b b b b c c c c c 
+a a a c c b b b b b b c c a a a 
+a a a c c b b c c b b c c a a a 
+c c c c c b b c c b b c c c c c 
+c c a a c d d d c d d c a a a a 
+c a 3 3 c d d d c d d c 3 3 3 a 
+c c c c c d d 4 4 d d c c c c c 
+a a a a c a a 4 4 a a a c c a a 
+3 3 3 a c 3 3 3 3 3 3 3 c 3 3 3 
+3 3 3 3 c 3 3 3 3 3 3 3 c 3 3 3 
+a a a c c a a a a a a c c a a a 
+`;
         }
         return null;
     })

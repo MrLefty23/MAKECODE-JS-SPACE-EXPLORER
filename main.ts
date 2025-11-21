@@ -33,6 +33,16 @@ let level = 1
 let enemyDirection = "below"
 let inRangeOfBro = false
 let leverPuzzleSolved = false
+let leverFlip = 1
+let correctOrder1 = false
+let correctOrder2 = false
+let correctOrder3 = false
+let correctOrder4 = false
+let correctOrder5 = false
+
+
+
+
 
 namespace SpriteKind{
     export const EnemyProjectile = SpriteKind.create()
@@ -1041,50 +1051,69 @@ game.onUpdate(function(){
 
     }
     //levers
-    function spawnLever(xPos: number, yPos: number, order: number, solved: number){
-        let lever = sprites.create(img`
-            a a a c c a a a a a a c c a a a
-            3 3 3 3 c 3 3 3 3 3 3 3 c 3 3 3
-            3 3 3 a c 3 3 3 3 3 3 3 c 3 3 3
-            a a a a c a a a a a a a c c a a
-            c c c c c d d d d d d c c c c c
-            c a 3 3 c d d d d d d c 3 3 3 a
-            c c a a c d d d d d d c a a a a
-            c c c c c b b b b b b c c c c c
-            a a a c c b b c c b b c c a a a
-            a a a c c b b c c b b c c a a a
-            c c c c c b b d c b b c c c c c
-            c a a a c b b d c b b c a a a c
-            c c c c c b c 4 4 b b c c c c c
-            a a c c a c c 4 4 c c c a a a a
-            c c c c c c c c c c c c c c c c
-            c c c c c c c c c c c c c c c c
-        `, SpriteKind.Lever)
+    function spawnLever(xPos: number, yPos: number, order: number){
+        let lever = sprites.create(assets.image`leverDownOff`, SpriteKind.Lever)
         if(order < 3){
-            lever.setImage(img`
-                c c c c c c c c c c c c c c c c
-                c c c c c c c c c c c c c c c c
-                a a c c a c c 4 4 c c c a a a a
-                c c c c c b c 4 4 b b c c c c c
-                c a a a c b b d c b b c a a a c
-                c c c c c b b d c b b c c c c c
-                a a a c c b b c c b b c c a a a
-                a a a c c b b c c b b c c a a a
-                c c c c c b b b b b b c c c c c
-                c c a a c d d d d d d c a a a a
-                c a 3 3 c d d d d d d c 3 3 3 a
-                c c c c c d d d d d d c c c c c
-                a a a a c a a a a a a a c c a a
-                3 3 3 a c 3 3 3 3 3 3 3 c 3 3 3
-                3 3 3 3 c 3 3 3 3 3 3 3 c 3 3 3
-                a a a c c a a a a a a c c a a a
-            `)
+            lever.setImage(assets.image`leverUpOff`)
         }
         lever.setPosition(xPos * 16, yPos * 16)
+        let flipped = false 
 
         game.onUpdate(function () {
-            if (lever.overlapsWith(bob) == true && controller.B.isPressed() == true && leverPuzzleSolved == false){
+            if(leverFlip == 7){
+                lever.setImage(assets.image`leverDownOff`)
+                if (order < 3) {
+                    lever.setImage(assets.image`leverUpOff`)
+                }
+                leverFlip = 1
+                //fix bug last lever stays down
+            }
+            if (lever.overlapsWith(bob) == true && controller.B.isPressed() == true && leverPuzzleSolved == false && flipped == false){
             //LeverFlip
+                if(order == 1 && leverFlip == 1){
+                    correctOrder1 = true
+                }
+                if (order == 2 && leverFlip == 2) {
+                    correctOrder2 = true
+                }
+                if (order == 3 && leverFlip == 3) {
+                    correctOrder3 = true
+                }
+                if (order == 4 && leverFlip == 4) {
+                    correctOrder4 = true
+                }
+                if (order == 5 && leverFlip == 5) {
+                    correctOrder5 = true
+                }
+                if(order < 3){
+                    lever.setImage(assets.image`leverUpOn`)
+                }
+                if(order >= 3){
+                    lever.setImage(assets.image`leverDownOn`)
+                }
+                leverFlip++
+                flipped = true
+                music.thump.play()
+                
+                if(leverFlip == 6){
+                    if (correctOrder1 == true && correctOrder2 == true && correctOrder3 == true && correctOrder4 == true && correctOrder5 == true){
+                        leverPuzzleSolved = true
+                        music.magicWand.play()
+                    }else{
+                        
+                        flipped = false
+                        music.powerDown.play()
+                        leverFlip = 7
+                        correctOrder1 = false
+                        correctOrder2 = false
+                        correctOrder3 = false
+                        correctOrder4 = false
+                        correctOrder5 = false
+
+                    }
+                }
+
+            
             }
         })
     }
@@ -1918,11 +1947,11 @@ function level2Setup(){
     }
   
     //spawnLevers
-    spawnLever(3, 3, 1, 0)
-    spawnLever(13, 3, 2, 0)
-    spawnLever(8, 8, 3, 0)
-    spawnLever(3, 15, 4, 0)
-    spawnLever(13, 15, 5, 0)
+    spawnLever(3, 3, 1)
+    spawnLever(13, 3, 2)
+    spawnLever(8, 8, 3)
+    spawnLever(3, 15, 4)
+    spawnLever(13, 15, 5)
     //spawnChests
     spawnChest(1, 42, "subtract")
     spawnChest(2, 44, "health")
