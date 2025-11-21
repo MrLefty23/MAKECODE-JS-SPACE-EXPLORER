@@ -32,6 +32,7 @@ let test = 0
 let level = 1
 let enemyDirection = "below"
 let inRangeOfBro = false
+let leverPuzzleSolved = false
 
 namespace SpriteKind{
     export const EnemyProjectile = SpriteKind.create()
@@ -52,6 +53,7 @@ namespace SpriteKind{
     export const BigRobo = SpriteKind.create()
     export const SubtractHealth = SpriteKind.create()
     export const RandHealth = SpriteKind.create()
+    export const Lever = SpriteKind.create()
     
 }   
 
@@ -718,6 +720,27 @@ game.onUpdate(function(){
             `)
             npc.say("Good luck and have fun!")
         }
+        if(costume == 13){
+            npc.setImage(img`
+                . . . . . . f f f f . . . . . .
+                . . . . f f f 2 2 f f f . . . .
+                . . . f f f 2 2 2 2 f f f . . .
+                . . f f f e e e e e e f f f . .
+                . . f f e 2 2 2 2 2 2 e e f . .
+                . . f e 2 f f f f f f 2 e f . .
+                . . f f f f e e e e f f f f . .
+                . f f e f b f 4 4 f b f e f f .
+                . f e e 4 1 f d d f 1 4 e e f .
+                . . f e e d d d d d d e e f . .
+                . . . f e e 4 4 4 4 e e f . . .
+                . . e 4 f 2 2 2 2 2 2 f 4 e . .
+                . . 4 d f 2 2 2 2 2 2 f d 4 . .
+                . . 4 4 f 4 4 5 5 4 4 f 4 4 . .
+                . . . . . f f f f f f . . . . .
+                . . . . . f f . . f f . . . . .
+            `)
+        }
+    
         game.onUpdate(function (){
             //Close2NPC
             if(Math.abs(bob.x - npc.x) < 40 && Math.abs(bob.y - npc.y) < 40 && level == 1){
@@ -783,13 +806,22 @@ game.onUpdate(function(){
                             game.splash('Take good care of him!')
                             music.powerUp.play()
                             spawnMonkeyCompanion()
-
-
-                          }
+                        }
                     }
                 }
-                
             }
+            //level2 
+            if (Math.abs(bob.x - npc.x) < 40 && Math.abs(bob.y - npc.y) < 40 && level == 2){
+                //chestNPC
+                if (costume == 13) {
+                    npc.say("Press B to talk", 500)
+                    if (controller.B.isPressed() == true) {
+                        game.splash('Be Careful!', 'Good Luck!')
+                    }
+                }
+
+            }
+
             
             
             if (deleteSprites == true) {
@@ -864,7 +896,7 @@ game.onUpdate(function(){
     }
 
     //chest
-    function spawnChest(xPos: number, yPos: number, kind: number){
+    function spawnChest(xPos: number, yPos: number, kind: string){
         let chest = sprites.create(img`
             . . b b b b b b b b b b b b . .
             . b 7 9 9 9 9 9 9 9 9 9 9 7 b .
@@ -884,13 +916,13 @@ game.onUpdate(function(){
             . b b . . . . . . . . . . b b .
         `, SpriteKind.Chest)
         chest.setPosition(xPos * 16, yPos * 16)
-        if(kind == 2){
+        if(kind == "health"){
             chest.setKind(SpriteKind.HealthChest)
         }
-        if(kind == 3){
+        if(kind == "subtract"){
             chest.setKind(SpriteKind.SubtractHealth)
         }
-        if(kind == 4){
+        if(kind == "random"){
             chest.setKind(SpriteKind.RandHealth)
         }
         //deleteSprites
@@ -1027,7 +1059,7 @@ game.onUpdate(function(){
             a a c c a c c 4 4 c c c a a a a
             c c c c c c c c c c c c c c c c
             c c c c c c c c c c c c c c c c
-        `)
+        `, SpriteKind.Lever)
         if(order < 3){
             lever.setImage(img`
                 c c c c c c c c c c c c c c c c
@@ -1049,7 +1081,14 @@ game.onUpdate(function(){
             `)
         }
         lever.setPosition(xPos * 16, yPos * 16)
+
+        game.onUpdate(function () {
+            if (lever.overlapsWith(bob) == true && controller.B.isPressed() == true && leverPuzzleSolved == false){
+            //LeverFlip
+            }
+        })
     }
+
     
 
 
@@ -1572,7 +1611,7 @@ game.onUpdate(function(){
     })
     sprites.onOverlap(SpriteKind.Player, SpriteKind.HealthChest, function (player: Sprite, chest: Sprite) {
         chest.destroy()
-        info.changeLifeBy(3)
+        info.changeLifeBy(Math.randomRange(1, 5))
 
         let openChest = sprites.create(img`
             . b b b b b b b b b b b b b b .
@@ -1599,7 +1638,7 @@ game.onUpdate(function(){
     //SubtractHealth
     sprites.onOverlap(SpriteKind.Player, SpriteKind.SubtractHealth, function (player: Sprite, chest: Sprite) {
         chest.destroy()
-        info.changeLifeBy(-3)
+        info.changeLifeBy(Math.randomRange(-4, -10))
 
         let openChest = sprites.create(img`
             . b b b b b b b b b b b b b b .
@@ -1628,7 +1667,7 @@ game.onUpdate(function(){
     //randhealth
     sprites.onOverlap(SpriteKind.Player, SpriteKind.RandHealth, function (player: Sprite, chest: Sprite) {
         chest.destroy()
-        info.changeLifeBy(Math.randomRange(1, 10))
+        info.changeLifeBy(Math.randomRange(1, 8))
 
         let openChest = sprites.create(assets.image`emptyChest
         `)
@@ -1785,13 +1824,13 @@ function level1Setup() {
     //alien6
     spawnAlien(60, 13, 1)
     //chest1
-    spawnChest(5, 18.5, 1)
+    spawnChest(5, 18.5, "coin")
     //chest2:Health
-    spawnChest(45, 13, 2)
+    spawnChest(45, 13, "health")
     //chest3
-    spawnChest(60, 25, 1)
+    spawnChest(60, 25, "coin")
     //chest4
-    spawnChest(5.5, 24.5, 1)
+    spawnChest(5.5, 24.5, "coin")
     //gate1
     spawnGate(45 , 35.5)
     //gate2
@@ -1822,11 +1861,11 @@ function level1Setup() {
     //portal
     spawnPortal(44, 66)
     //chests
-    spawnChest(63.5, 1, 1)
-    spawnChest(28, 2, 1)
-    spawnChest(14, 33, 2)
-    spawnChest(2, 62, 1)
-    spawnChest(7, 72.5, 2)
+    spawnChest(63.5, 1, "coin")
+    spawnChest(28, 2, "coin")
+    spawnChest(14, 33, "health")
+    spawnChest(2, 62, "coin")
+    spawnChest(7, 72.5, "health")
     //EndtourGuide
     spawnNPC(61, 31.5, 6)
     //startTourGuide
@@ -1872,8 +1911,8 @@ function level2Setup(){
     spawnNPC(48.5, 31.5, 10)
     spawnNPC(48.5, 49.5, 11)
     spawnNPC(32.5, 31.5, 12)
-    spawnChest(1.5, 39, 3)
-    spawnChest(1, 29.5, 4)
+    spawnChest(1.5, 39, "subtract")
+    spawnChest(1, 29.5, "random")
     if(monkeyCompanion == true){
         bro.setPosition(bob.x, bob.y)
     }
@@ -1884,7 +1923,40 @@ function level2Setup(){
     spawnLever(8, 8, 3, 0)
     spawnLever(3, 15, 4, 0)
     spawnLever(13, 15, 5, 0)
+    //spawnChests
+    spawnChest(1, 42, "subtract")
+    spawnChest(2, 44, "health")
+    spawnChest(14, 60, "random")
+    spawnChest(1, 60, "subtract")
+    spawnChest(12, 52, "random")
+    spawnChest(1, 47, "subtract")
+    spawnChest(6, 48, "health")
+    spawnChest(4, 51, "subtract")
+    spawnChest(7, 53, "subtract")
+    spawnChest(10, 46, "subtract")
+    spawnChest(7, 57, "subtract")
+    //spawnOther
+    spawnNPC(13, 47, 13)
+    //L-Puzzle
+    spawnAlien(12, 39, 2)
+    spawnAlien(2, 38, 2)
+    spawnAlien(3, 33, 2)
+    spawnAlien(6, 29, 2)
+    spawnAlien(8, 25, 2)
+    spawnAlien(8, 22, 2)
+    spawnAlien(9, 19, 2)
+    spawnAlien(11, 21, 2)
+    //High-L-Puzzle
+    spawnAlien2(7, 17, 2)
+    spawnAlien2(9, 19, 2)
+    spawnAlien2(7, 21, 2)
+    spawnAlien2(8, 11, 2)
+    spawnAlien2(2, 11, 2)
+    spawnAlien2(14, 10, 2)
+    spawnAlien2(14, 15, 2)
+    spawnAlien2(12, 12, 2)
 }
+
 
 
 
